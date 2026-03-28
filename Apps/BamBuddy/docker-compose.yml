@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   bambuddy:
     image: ghcr.io/maziggy/bambuddy:latest
