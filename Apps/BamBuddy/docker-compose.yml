@@ -1,11 +1,22 @@
 services:
   bambuddy:
     image: ghcr.io/maziggy/bambuddy:latest
-    container_name: bambuddy
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
+    container_name: Bambuddy
+    healthcheck:
+      test: timeout 10s bash -c ':> /dev/tcp/127.0.0.1/8109' || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    user: 1026:100
+    network_mode: host
     volumes:
-      - ./data:/app/data
+      - /volume1/docker/bambuddy/data:/app/data:rw
+      - /volume1/docker/bambuddy/logs:/app/logs:rw
+      - /volume1/docker/bambuddy/virtual_printer:/app/data/virtual_printer:rw
     environment:
-      - NODE_ENV=production
+       TZ: Europe/Bucharest
+       PORT: 8109
+    cap_add:
+      - NET_BIND_SERVICE
+    restart: on-failure:5
